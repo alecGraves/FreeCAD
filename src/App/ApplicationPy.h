@@ -75,18 +75,20 @@ public:
     static PyObject* sRemoveDocObserver      (PyObject *self,PyObject *args);
     static PyObject *sIsRestoring            (PyObject *self,PyObject *args);
 
-    static PyObject *sSetLogLevel            (PyObject *self,PyObject *args);
-    static PyObject *sGetLogLevel            (PyObject *self,PyObject *args);
+    static PyObject *sSetLogLevel             (PyObject *self,PyObject *args);
+    static PyObject *sGetLogLevel             (PyObject *self,PyObject *args);
 
-    static PyObject *sCheckLinkDepth         (PyObject *self,PyObject *args);
-    static PyObject *sGetLinksTo             (PyObject *self,PyObject *args);
+    static PyObject *sCheckLinkDepth          (PyObject *self,PyObject *args);
+    static PyObject *sGetLinksTo              (PyObject *self,PyObject *args);
 
-    static PyObject *sGetDependentObjects    (PyObject *self,PyObject *args);
+    static PyObject *sGetDependentObjects     (PyObject *self,PyObject *args);
 
-    static PyObject *sSetActiveTransaction   (PyObject *self,PyObject *args);
-    static PyObject *sGetActiveTransaction   (PyObject *self,PyObject *args);
-    static PyObject *sCloseActiveTransaction (PyObject *self,PyObject *args);
-    static PyObject *sCheckAbort             (PyObject *self,PyObject *args);
+    static PyObject *sSetActiveTransaction    (PyObject *self,PyObject *args);
+    static PyObject *sGetActiveTransaction    (PyObject *self,PyObject *args);
+    static PyObject *sCloseActiveTransaction  (PyObject *self,PyObject *args);
+    static PyObject *sCheckAbort              (PyObject *self,PyObject *args);
+    static PyObject *sSetFineGrainedRecompute (PyObject *self,PyObject *args);
+    static PyObject *sGetFineGrainedRecompute (PyObject *self);
     static PyMethodDef    Methods[];
     // clang-format on
 };
