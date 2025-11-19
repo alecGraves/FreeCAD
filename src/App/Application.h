@@ -893,6 +893,7 @@ public:
     /// Check if there is any link to the given object
     bool hasLinksTo(const DocumentObject *obj) const;
     /// @}
+    bool fineGrained = true;
 
     friend class App::Document;
 
