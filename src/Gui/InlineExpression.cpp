@@ -4,6 +4,7 @@
 
 #include <QObject>
 #include <QRegularExpression>
+#include <QStringList>
 
 #include <cmath>
 #include <cctype>
@@ -576,7 +577,8 @@ bool looksLikeExpressionInput(const QString& text)
         return false;
     }
 
-    if (parseAssignment(normalized).isAssignment || normalized.contains(QStringLiteral("<<"))) {
+    if (parseAssignment(normalized).isAssignment || normalized.contains(QStringLiteral("<<"))
+        || normalized.contains(QLatin1Char(';'))) {
         return true;
     }
 
@@ -597,6 +599,82 @@ bool looksLikeExpressionInput(const QString& text)
     }
 
     return false;
+}
+
+QString preprocessStatements(
+    App::Document* doc,
+    App::DocumentObject* owner,
+    const QString& input,
+    const Base::Type& defaultPropertyType,
+    QString& error)
+{
+    if (!input.contains(QLatin1Char(';'))) {
+        return {};
+    }
+
+    QStringList parts;
+    for (const QString& s : input.split(QLatin1Char(';'), Qt::SkipEmptyParts)) {
+        QString trimmed = s.trimmed();
+        if (!trimmed.isEmpty()) {
+            parts.append(trimmed);
+        }
+    }
+
+    if (parts.size() <= 1) {
+        return {};
+    }
+
+    if (!doc || !owner) {
+        error = QObject::tr("Unknown document");
+        return {};
+    }
+
+    // Validate all names upfront before creating anything
+    for (int i = 0; i < parts.size() - 1; ++i) {
+        Assignment a = parseAssignment(parts[i]);
+        if (!a.isAssignment) {
+            error = QObject::tr("Non-final statement must be an assignment: %1").arg(parts[i]);
+            return {};
+        }
+        if (!isValidName(a.name, error)) {
+            return {};
+        }
+    }
+    {
+        Assignment finalA = parseAssignment(parts.last());
+        if (finalA.isAssignment && !isValidName(finalA.name, error)) {
+            return {};
+        }
+    }
+
+    // Process non-final assignments sequentially
+    for (int i = 0; i < parts.size() - 1; ++i) {
+        Assignment a = parseAssignment(parts[i]);
+        QString rhsText = qualifyDefaultVarSetNames(doc, a.valueExpr);
+
+        std::shared_ptr<App::Expression> expr;
+        Base::Quantity quantity;
+        if (!parseNumberExpression(owner, rhsText, expr, quantity, error)) {
+            return {};
+        }
+
+        App::DocumentObject* varSet = resolveVarSet(doc, a, true, error);
+        if (!varSet) {
+            return {};
+        }
+
+        App::Property* prop = ensureProperty(varSet, a.name, defaultPropertyType);
+        if (!prop) {
+            error = QObject::tr("Could not create variable property.");
+            return {};
+        }
+
+        if (!assignExpressionToProperty(varSet, prop, expr.get(), error)) {
+            return {};
+        }
+    }
+
+    return qualifyDefaultVarSetNames(doc, parts.last());
 }
 
 }  // namespace Gui::InlineExpression

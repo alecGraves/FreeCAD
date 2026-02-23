@@ -512,6 +512,79 @@ private Q_SLOTS:
         QCOMPARE(spin.takeUnboundExpressionText(), std::string());
     }
 
+    void test_MultiStatementCreatesMultipleProperties()  // NOLINT
+    {
+        Gui::QuantitySpinBox spin;
+        spin.setUnit(Base::Unit::One);
+        spin.bind(pathFloat());
+
+        setEditorText(spin, QStringLiteral("x=42; y=x+1"));
+        QTest::keyClick(&spin, Qt::Key_Return);
+        QCoreApplication::processEvents();
+
+        auto* parameters = freecad_cast<App::VarSet*>(doc->getObject("Parameters"));
+        QVERIFY(parameters != nullptr);
+        auto* x = freecad_cast<App::PropertyFloat*>(parameters->getPropertyByName("x"));
+        QVERIFY(x != nullptr);
+        QCOMPARE(x->getValue(), 42.0);
+        auto* y = parameters->getPropertyByName("y");
+        QVERIFY(y != nullptr);
+
+        auto info = target->getExpression(pathFloat());
+        QVERIFY(info.expression != nullptr);
+    }
+
+    void test_MultiStatementLastExpressionBindsTarget()  // NOLINT
+    {
+        Gui::QuantitySpinBox spin;
+        spin.setUnit(Base::Unit::One);
+        spin.bind(pathFloat());
+
+        setEditorText(spin, QStringLiteral("r=10; r*2"));
+        QTest::keyClick(&spin, Qt::Key_Return);
+        QCoreApplication::processEvents();
+
+        auto* parameters = freecad_cast<App::VarSet*>(doc->getObject("Parameters"));
+        QVERIFY(parameters != nullptr);
+        auto* r = freecad_cast<App::PropertyFloat*>(parameters->getPropertyByName("r"));
+        QVERIFY(r != nullptr);
+        QCOMPARE(r->getValue(), 10.0);
+
+        auto info = target->getExpression(pathFloat());
+        QVERIFY(info.expression != nullptr);
+    }
+
+    void test_MultiStatementNonFinalExpressionRejected()  // NOLINT
+    {
+        Gui::QuantitySpinBox spin;
+        spin.setUnit(Base::Unit::One);
+        spin.bind(pathFloat());
+
+        setEditorText(spin, QStringLiteral("42; x=10"));
+        QTest::keyClick(&spin, Qt::Key_Return);
+        QCoreApplication::processEvents();
+
+        QVERIFY(doc->getObject("Parameters") == nullptr);
+        auto info = target->getExpression(pathFloat());
+        QVERIFY(info.expression == nullptr);
+    }
+
+    void test_MultiStatementRollbackOnFailure()  // NOLINT
+    {
+        Gui::QuantitySpinBox spin;
+        spin.setUnit(Base::Unit::One);
+        spin.bind(pathFloat());
+
+        // mm is a unit name — rejected before any variables are created
+        setEditorText(spin, QStringLiteral("x=42; mm=10"));
+        QTest::keyClick(&spin, Qt::Key_Return);
+        QCoreApplication::processEvents();
+
+        QVERIFY(doc->getObject("Parameters") == nullptr);
+        auto info = target->getExpression(pathFloat());
+        QVERIFY(info.expression == nullptr);
+    }
+
 private:
     static void ensureGuiApplication()
     {

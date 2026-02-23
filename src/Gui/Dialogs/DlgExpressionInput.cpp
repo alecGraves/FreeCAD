@@ -424,6 +424,46 @@ void DlgExpressionInput::textChanged()
     okBtn->setDefault(true);
 
     try {
+        // Multi-statement: validate structure and names during typing
+        if (text.contains(QLatin1Char(';'))) {
+            QStringList parts;
+            for (const QString& s : text.split(QLatin1Char(';'), Qt::SkipEmptyParts)) {
+                QString trimmed = s.trimmed();
+                if (!trimmed.isEmpty()) {
+                    parts.append(trimmed);
+                }
+            }
+            if (parts.size() > 1) {
+                for (int i = 0; i < parts.size() - 1; ++i) {
+                    InlineExpression::Assignment a =
+                        InlineExpression::parseAssignment(parts[i]);
+                    if (!a.isAssignment) {
+                        throw Base::RuntimeError(
+                            tr("Non-final statement must be an assignment")
+                                .toStdString()
+                                .c_str());
+                    }
+                    QString err;
+                    if (!InlineExpression::isValidName(a.name, err)) {
+                        throw Base::RuntimeError(err.toStdString().c_str());
+                    }
+                }
+                InlineExpression::Assignment finalA =
+                    InlineExpression::parseAssignment(parts.last());
+                if (finalA.isAssignment) {
+                    QString err;
+                    if (!InlineExpression::isValidName(finalA.name, err)) {
+                        throw Base::RuntimeError(err.toStdString().c_str());
+                    }
+                }
+                okBtn->setEnabled(true);
+                message = tr("Multi-statement input").toStdString();
+                ui->msg->setPalette(okBtn->palette());
+                setMsgText();
+                return;
+            }
+        }
+
         const InlineExpression::Assignment assignment = InlineExpression::parseAssignment(text);
         if (assignment.isAssignment) {
             QString error;
@@ -603,7 +643,43 @@ void DlgExpressionInput::accept()
         return;
     }
 
-    const QString text = ui->expression->toPlainText().trimmed();
+    QString text = ui->expression->toPlainText().trimmed();
+
+    // Multi-statement preprocessing
+    {
+        App::DocumentObject* docObj = path.getDocumentObject();
+        App::Document* doc = docObj ? docObj->getDocument() : nullptr;
+        QString prepError;
+        QString finalStmt = InlineExpression::preprocessStatements(
+            doc, docObj, text, determineTypeVarSet(), prepError);
+        if (!prepError.isEmpty()) {
+            message = prepError.toStdString();
+            setMsgText();
+            QPalette p(ui->msg->palette());
+            p.setColor(QPalette::WindowText, Qt::red);
+            ui->msg->setPalette(p);
+            okBtn->setDisabled(true);
+            return;
+        }
+        if (!finalStmt.isEmpty()) {
+            text = finalStmt;
+            // Update expression for the preprocessed final statement
+            try {
+                InlineExpression::Assignment a = InlineExpression::parseAssignment(text);
+                checkExpression(a.isAssignment ? a.valueExpr : text);
+            }
+            catch (Base::Exception& e) {
+                message = e.what();
+                setMsgText();
+                QPalette p(ui->msg->palette());
+                p.setColor(QPalette::WindowText, Qt::red);
+                ui->msg->setPalette(p);
+                okBtn->setDisabled(true);
+                return;
+            }
+        }
+    }
+
     const InlineExpression::Assignment assignment = InlineExpression::parseAssignment(text);
     if (assignment.isAssignment) {
         QString error;

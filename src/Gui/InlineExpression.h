@@ -70,4 +70,11 @@ QString qualifyDefaultVarSetNames(App::Document* doc, const QString& text);
 std::string makeReferenceExpression(const App::DocumentObject* varSet, const QString& name);
 bool looksLikeExpressionInput(const QString& text);
 
+QString preprocessStatements(
+    App::Document* doc,
+    App::DocumentObject* owner,
+    const QString& input,
+    const Base::Type& defaultPropertyType,
+    QString& error);
+
 }  // namespace Gui::InlineExpression

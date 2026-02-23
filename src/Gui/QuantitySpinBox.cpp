@@ -460,8 +460,8 @@ QuantitySpinBox::InlineCommitResult QuantitySpinBox::commitInlineExpression(QStr
         return InlineCommitResult::NotHandled;
     }
 
-    const InlineExpression::Assignment assignment = InlineExpression::parseAssignment(text);
-    if (!assignment.isAssignment && !InlineExpression::looksLikeExpressionInput(text)) {
+    if (!InlineExpression::parseAssignment(text).isAssignment
+        && !InlineExpression::looksLikeExpressionInput(text)) {
         return InlineCommitResult::NotHandled;
     }
 
@@ -475,6 +475,20 @@ QuantitySpinBox::InlineCommitResult QuantitySpinBox::commitInlineExpression(QStr
         return InlineCommitResult::Error;
     }
 
+    {
+        QString prepError;
+        QString finalStmt = InlineExpression::preprocessStatements(
+            doc, owner, text, determineInlineAssignmentType(), prepError);
+        if (!prepError.isEmpty()) {
+            error = prepError;
+            return InlineCommitResult::Error;
+        }
+        if (!finalStmt.isEmpty()) {
+            text = finalStmt;
+        }
+    }
+
+    const InlineExpression::Assignment assignment = InlineExpression::parseAssignment(text);
     if (assignment.isAssignment) {
         if (!InlineExpression::isValidName(assignment.name, error)) {
             return InlineCommitResult::Error;

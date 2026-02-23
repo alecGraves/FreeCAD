@@ -358,6 +358,45 @@ private Q_SLOTS:
         QCOMPARE(x->getValue(), 5L);
     }
 
+    void multiStatement_createsMultipleProperties()  // NOLINT
+    {
+        QWidget parent;
+        Gui::Dialog::DlgExpressionInput dlg(path(), nullptr, Base::Unit::One, &parent);
+        setInputText(dlg, QStringLiteral("x=42; y=x+1"));
+        QVERIFY(okButton(dlg)->isEnabled());
+
+        dlg.accept();
+        QCOMPARE(dlg.result(), static_cast<int>(QDialog::Accepted));
+
+        auto* parameters = freecad_cast<App::VarSet*>(doc->getObject("Parameters"));
+        QVERIFY(parameters != nullptr);
+        auto* x = freecad_cast<App::PropertyFloat*>(parameters->getPropertyByName("x"));
+        QVERIFY(x != nullptr);
+        QCOMPARE(x->getValue(), 42.0);
+        auto* y = parameters->getPropertyByName("y");
+        QVERIFY(y != nullptr);
+    }
+
+    void multiStatement_lastExpressionBindsTarget()  // NOLINT
+    {
+        QWidget parent;
+        Gui::Dialog::DlgExpressionInput dlg(path(), nullptr, Base::Unit::One, &parent);
+        setInputText(dlg, QStringLiteral("r=10; r*2"));
+        QVERIFY(okButton(dlg)->isEnabled());
+
+        dlg.accept();
+        QCOMPARE(dlg.result(), static_cast<int>(QDialog::Accepted));
+
+        auto* parameters = freecad_cast<App::VarSet*>(doc->getObject("Parameters"));
+        QVERIFY(parameters != nullptr);
+        auto* r = freecad_cast<App::PropertyFloat*>(parameters->getPropertyByName("r"));
+        QVERIFY(r != nullptr);
+        QCOMPARE(r->getValue(), 10.0);
+
+        auto expr = dlg.getExpression();
+        QVERIFY(expr != nullptr);
+    }
+
 private:
     static void ensureGuiApplication()
     {
