@@ -1,5 +1,4 @@
-#ifndef SRC_APP_DEPEDGE_H_
-#define SRC_APP_DEPEDGE_H_
+#pragma once
 
 #include <FCGlobal.h>
 #include <string>
@@ -102,9 +101,9 @@ decltype(auto) get(DepEdge const& e) {
 
 template <std::size_t I>
 decltype(auto) get(DepEdge&& e) {
-    if constexpr (I == 0) {return std::move(e.fromObj);}
+    if constexpr (I == 0) {return (e.fromObj);}
     else if constexpr (I == 1) {return std::move(e.fromProp);}
-    else if constexpr (I == 2) {return std::move(e.toObj);}
+    else if constexpr (I == 2) {return (e.toObj);}
     else /* I == 3 */ {return std::move(e.toProp);}
 }
 
@@ -120,5 +119,3 @@ template<> struct tuple_element<1, App::DepEdge> { using type = std::string; };
 template<> struct tuple_element<2, App::DepEdge> { using type = App::DocumentObject*; };
 template<> struct tuple_element<3, App::DepEdge> { using type = std::string; };
 }
-
-#endif // SRC_APP_DEPEDGE_H_

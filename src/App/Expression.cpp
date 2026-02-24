@@ -929,7 +929,11 @@ void Expression::getDepObjects(std::map<App::DocumentObject*, bool>& deps,
                     res.first->second = hidden;
                 if (propDeps) {
                     for (auto &propName : dep.second) {
-                        (*propDeps)[std::make_pair(propName, obj)] = hidden;
+                        auto key = std::make_pair(propName, obj);
+                        auto res = propDeps->insert(std::make_pair(key, hidden));
+                        if (!hidden || res.second) {
+                            res.first->second = hidden;
+                        }
                     }
                 }
             }

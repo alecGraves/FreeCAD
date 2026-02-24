@@ -268,7 +268,7 @@ bool DocumentObject::isTouched() const
     return ExpressionEngine.isTouched() || StatusBits.test(ObjectStatus::Touch);
 }
 
-void DocumentObject::enforceRecompute(std::string& propName)
+void DocumentObject::enforceRecompute(const std::string& propName)
 {
     touch(false);
     touchedProps.insert(propName);
