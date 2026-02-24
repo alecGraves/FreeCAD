@@ -1351,7 +1351,7 @@ PyObject* ApplicationPy::sSetFineGrainedRecompute(PyObject* /*self*/, PyObject* 
     PY_CATCH;
 }
 
-PyObject* ApplicationPy::sGetFineGrainedRecompute(PyObject* /*self*/)
+PyObject* ApplicationPy::sGetFineGrainedRecompute(PyObject* /*self*/, PyObject* /*args*/)
 {
     PY_TRY
     {

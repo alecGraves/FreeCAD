@@ -993,7 +993,7 @@ void PropertyLinkList::set1Value(int idx, DocumentObject* const& value)
             }
             if (value) {
                 value->_addBackLink(static_cast<DocumentObject*>(getContainer()));
-                obj->_addBackLinkProp(getName(), static_cast<DocumentObject*>(getContainer()));
+                value->_addBackLinkProp(getName(), static_cast<DocumentObject*>(getContainer()));
             }
         }
     }
@@ -5981,7 +5981,9 @@ void PropertyXLinkContainer::updateDepsProp(
                 _PropDeps.erase(it);
                 continue;
             }
-            obj->_addBackLinkProp(getName(), owner, propName.c_str());
+            if (!hidden) {
+                obj->_addBackLinkProp(getName(), owner, propName.c_str());
+            }
         }
     }
 
@@ -6102,9 +6104,17 @@ void PropertyXLinkContainer::clearDeps()
                 obj->_removeBackLinkProp(getName(), owner);
             }
         }
+        for (auto& v : _PropDeps) {
+            auto obj = v.first.second;
+            if (!v.second && obj && obj->isAttachedToDocument()
+                && obj->getDocument() == owner->getDocument()) {
+                obj->_removeBackLinkProp(getName(), owner, v.first.first.c_str());
+            }
+        }
     }
 
     _Deps.clear();
+    _PropDeps.clear();
     _XLinks.clear();
     _LinkRestored = false;
 }
@@ -6125,7 +6135,7 @@ void PropertyXLinkContainer::getLinksProp(std::vector<std::pair<std::string, App
                                           bool all) const
 {
     for (auto& [pair, hidden] : _PropDeps) {
-        if (all || !hidden) {
+        if ((all || !hidden) && pair.second && pair.second->isAttachedToDocument()) {
             links.push_back(pair);
         }
     }

@@ -131,6 +131,7 @@ class FineGrainedRecomputeCases(unittest.TestCase):
     # or off.
 
     def setUp(self):
+        self._savedFineGrained = FreeCAD.getFineGrainedRecompute()
         self.Doc = FreeCAD.newDocument(f"RecomputeTests_{self._testMethodName}")
 
         method = getattr(self, self._testMethodName)
@@ -139,6 +140,7 @@ class FineGrainedRecomputeCases(unittest.TestCase):
 
     def tearDown(self):
         FreeCAD.closeDocument(self.Doc.Name)
+        FreeCAD.setFineGrainedRecompute(self._savedFineGrained)
 
     def assertDep(self, depEdges, depEdgeTuples):
         """Helper to assert that a list of dependency edges matches expected.

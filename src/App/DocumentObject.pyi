@@ -23,7 +23,7 @@ class DocumentObject(ExtensionContainer):
         Label2: str = ...
 
     OutListProp: Final[List[DepEdge]] = []
-    """A list of all objects which link to this object with properties."""
+    """A list of dependency edges from this object to other objects with properties."""
 
     OutList: Final[List["DocumentObject"]] = []
     """A list of all objects this object links to."""

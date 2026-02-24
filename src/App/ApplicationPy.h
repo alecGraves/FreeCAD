@@ -89,7 +89,7 @@ public:
     static PyObject *sCloseActiveTransaction  (PyObject *self,PyObject *args);
     static PyObject *sCheckAbort              (PyObject *self,PyObject *args);
     static PyObject *sSetFineGrainedRecompute (PyObject *self,PyObject *args);
-    static PyObject *sGetFineGrainedRecompute (PyObject *self);
+    static PyObject *sGetFineGrainedRecompute (PyObject *self, PyObject *args);
     static PyMethodDef    Methods[];
     // clang-format on
 };
