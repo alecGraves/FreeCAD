@@ -11,6 +11,10 @@ std::string DepEdgePy::representation() const
     std::stringstream str;
     auto& [fromObj, fromProp, toObj, toProp] = *getDepEdgePtr();
 
+    if (!fromObj || !toObj) {
+        return "<invalid DepEdge>";
+    }
+
     str << fromObj->getFullName() << "." << (fromProp.empty() ? "HEAD" : fromProp)
         << " --> "
         << toObj->getFullName() << "." << (toProp.empty() ? "HEAD" : toProp);
@@ -19,27 +23,35 @@ std::string DepEdgePy::representation() const
 
 Py::Object DepEdgePy::getFromObj() const
 {
-    return Py::Object(getDepEdgePtr()->fromObj->getPyObject(), true);
+    auto* obj = getDepEdgePtr()->fromObj;
+    if (!obj) {
+        return Py::None();
+    }
+    return Py::Object(obj->getPyObject(), true);
 }
 
 Py::String DepEdgePy::getFromProp() const
 {
-    return Py::String(getDepEdgePtr()->fromProp);
+    return {getDepEdgePtr()->fromProp};
 }
 
 Py::Object DepEdgePy::getToObj() const
 {
-    return Py::Object(getDepEdgePtr()->toObj->getPyObject(), true);
+    auto* obj = getDepEdgePtr()->toObj;
+    if (!obj) {
+        return Py::None();
+    }
+    return Py::Object(obj->getPyObject(), true);
 }
 
 Py::String DepEdgePy::getToProp() const
 {
-    return Py::String(getDepEdgePtr()->toProp);
+    return {getDepEdgePtr()->toProp};
 }
 
 PyObject* DepEdgePy::getCustomAttributes(const char* /*attr*/) const
 {
-    return Py_None;
+    return nullptr;
 }
 
 int DepEdgePy::setCustomAttributes(const char* /*attr*/, PyObject* /*obj*/)

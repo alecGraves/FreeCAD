@@ -793,7 +793,7 @@ bool importExternalElements(App::PropertyLinkSub& prop, std::vector<App::SubObje
         if (App::GetApplication().fineGrained) {
             // Fully mimics the else block except for taking into account input properties.
             for (const auto& [fromObj, fromProp, toObj, toProp] : inListProp) {
-                if (fromObj == sobj && !editObj->isInputProperty(toProp)) {
+                if (fromObj == sobj && !toObj->isInputProperty(toProp)) {
                     FC_THROWM(
                         Base::RuntimeError,
                         "Cyclic dependency on object " << sobjT.getSubObjectFullName(docName)

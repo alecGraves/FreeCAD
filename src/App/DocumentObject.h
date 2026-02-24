@@ -329,7 +329,7 @@ public:
      * @param[in] propName The name of the property that needs to be marked as
      * touched.
      */
-    void enforceRecompute(std::string& propName);
+    void enforceRecompute(const std::string& propName);
 
     /**
      * @brief Check whether the document object must be recomputed.

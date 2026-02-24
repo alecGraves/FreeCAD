@@ -2424,6 +2424,9 @@ static void buildDependencyList(const std::vector<DocumentObject*>& objectArray,
 
         std::vector<DepEdge> outListProp = obj->getOutListProp(op);
         for (const auto& [objFrom, propFrom, objTo, propNameTo] : outListProp) {
+            if (!objTo) {
+                continue;
+            }
             // Add dependencies on HEAD
             if (propNameTo.empty()) {
                 outList.push_back(objTo);
@@ -2807,6 +2810,9 @@ int Document::recompute(const std::vector<DocumentObject*>& objs,
                         // set all dependent objects touched based on properties
                         std::vector<DepEdge> inList = obj->getInListProp();
                         for (auto& [objFrom, propFrom, objTo, propTo] : inList) {
+                            if (!objFrom) {
+                                continue;
+                            }
                             if (obj->touchedProps.contains(propTo) || propTo.empty()) {
                                 objFrom->enforceRecompute(propFrom);
                             }

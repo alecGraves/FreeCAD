@@ -24,9 +24,8 @@
 
 
 #include <algorithm>
-#include <boost/graph/graphviz.hpp>
 #include <random>
-#include <App/Application.h>
+#include <boost/graph/graphviz.hpp>
 
 #include "Application.h"
 #include "Document.h"
@@ -140,7 +139,7 @@ static void exportSubGraph(DocumentObject* obj, std::ostream& out)
     out << "  }\n\n";
 }
 
-static void exportEdge(std::string& from, std::string& to, std::ostream& out)
+static void exportEdge(const std::string& from, const std::string& to, std::ostream& out)
 {
     out << "  " << from << " -> " << to << ";\n";
 }
@@ -164,11 +163,14 @@ static void exportEdges(DocumentObject* objTo, std::ostream& out)
         }
     }
 
-    for (const auto& [objFrom, propFrom, objTo, propTo] : objTo->getInListProp()) {
-        const char* nameObjFrom = objFrom->getNameInDocument();
-        std::string from = nameObjFrom + ("_" + propFrom);
-        std::string to = nameObjTo + ("_" + (propTo == "" ? "HEAD" : propTo));
-        exportEdge(from,to, out);
+    for (const auto& [edgeFromObj, edgeFromProp, edgeToObj, edgeToProp] : objTo->getInListProp()) {
+        if (!edgeFromObj || !edgeFromObj->getNameInDocument()) {
+            continue;
+        }
+        const char* nameEdgeFrom = edgeFromObj->getNameInDocument();
+        std::string edgeFrom = nameEdgeFrom + ("_" + edgeFromProp);
+        std::string edgeTo = nameObjTo + ("_" + (edgeToProp.empty() ? std::string("HEAD") : edgeToProp));
+        exportEdge(edgeFrom, edgeTo, out);
     }
     out << "\n";
 }
@@ -179,11 +181,13 @@ void Document::exportGraphvizProp(std::ostream& out) const
     out << "  rankdir=TB;\n";
     out << "  node [shape=ellipse, color=black];\n\n";
 
-    for (auto* obj : getDependingObjects()) {
+    auto depObjs = getDependingObjects();
+
+    for (auto* obj : depObjs) {
         exportSubGraph(obj, out);
     }
 
-    for (auto* obj : getDependingObjects()) {
+    for (auto* obj : depObjs) {
         exportEdges(obj, out);
     }
 
