@@ -23,9 +23,15 @@
  ***************************************************************************/
 
 
+#include <Inventor/events/SoKeyboardEvent.h>
+#include <QAbstractSpinBox>
 #include <QApplication>
 #include <QEvent>
 #include <QKeyEvent>
+#include <QLineEdit>
+
+
+#include "ViewProviderSketch.h"
 
 #include "DrawSketchKeyboardManager.h"
 
@@ -98,27 +104,32 @@ DrawSketchKeyboardManager::KeyboardEventHandlingMode DrawSketchKeyboardManager::
     QKeyEvent* keyEvent
 )
 {
-    // Detect if the user wants to start editing the input
+    QWidget* focusWidget = QApplication::focusWidget();
+    bool isTextInputFocused = focusWidget
+        && (qobject_cast<QAbstractSpinBox*>(focusWidget) || qobject_cast<QLineEdit*>(focusWidget)
+            || qobject_cast<QAbstractSpinBox*>(focusWidget->parentWidget()));
 
+    if (!isTextInputFocused) {
+        return keyMode;
+    }
+
+    // Detect if the user wants to start editing the input
     if (keyEvent->matches(QKeySequence::Paste)) {
         return KeyboardEventHandlingMode::DSHControl;
     }
     // on Linux you need to use key() for backspace
-    if (keyEvent->key() == Qt::Key_Backspace || keyEvent->matches(QKeySequence::Backspace)
-        || keyEvent->matches(QKeySequence::Delete)) {
+    bool isPrintable = !keyEvent->text().isEmpty() && keyEvent->text().at(0).isPrint();
+    bool isEditingKey = keyEvent->key() == Qt::Key_Enter || keyEvent->key() == Qt::Key_Return
+        || keyEvent->key() == Qt::Key_Tab || keyEvent->key() == Qt::Key_Backtab
+        || keyEvent->key() == Qt::Key_Left || keyEvent->key() == Qt::Key_Right
+        || keyEvent->key() == Qt::Key_Up || keyEvent->key() == Qt::Key_Down
+        || keyEvent->key() == Qt::Key_Backspace || keyEvent->matches(QKeySequence::Backspace)
+        || keyEvent->matches(QKeySequence::Delete);
+
+    if (isPrintable || isEditingKey) {
         return KeyboardEventHandlingMode::DSHControl;
     }
 
-    const QString& text = keyEvent->text();
-    if (!text.isEmpty()) {
-        QChar ch = text.front();
-        if (ch.isDigit()) {
-            return KeyboardEventHandlingMode::DSHControl;
-        }
-        if (ch == '-' || ch == '.' || ch == ',') {
-            return KeyboardEventHandlingMode::DSHControl;
-        }
-    }
     return keyMode;
 }
 
