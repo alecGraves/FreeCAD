@@ -36,7 +36,6 @@
 #include <list>
 #include <algorithm>
 #include <filesystem>
-#include <format>
 #include <optional>
 
 #include <boost/algorithm/string.hpp>
@@ -424,7 +423,7 @@ int Document::_openTransaction(std::string name, int id)
 
     Document* transactionInitiator = GetApplication().transactionInitiator(id);
     if (transactionInitiator && transactionInitiator != this && !transactionInitiator->hasPendingTransaction()) {
-        std::string aname = std::format("-> {}", d->activeUndoTransaction->Name);
+        std::string aname = "-> " + d->activeUndoTransaction->Name;
         FC_LOG("auto transaction " << getName() << " -> " << transactionInitiator->getName());
         transactionInitiator->_openTransaction(aname, id);
     }

@@ -26,7 +26,6 @@
 #include <array>
 #include <QApplication>
 #include <QDir>
-#include <QDirListing>
 #include <QKeyEvent>
 #include <QRegularExpression>
 #include <QStringList>
@@ -310,8 +309,9 @@ TStringMap Translator::supportedLocales() const
         for (const auto& file : fileNames) {
             const auto lang
                 = QStringView(file).mid(file.lastIndexOf('_') + 1).chopped(sizeof(".qm") - 1);
+            const QString languageCode = lang.toString();
             for (const auto& domainMap : d->mapLanguageTopLevelDomain) {
-                if (lang == domainMap.second) {
+                if (languageCode == QString::fromStdString(domainMap.second)) {
                     // Emplace only inserts if no element exists at the key yet,
                     // avoiding string copies here.
                     d->mapSupportedLocales.emplace(domainMap.first, domainMap.second);

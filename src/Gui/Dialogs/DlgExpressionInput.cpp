@@ -647,7 +647,7 @@ void DlgExpressionInput::accept()
 
             const std::string refExpr
                 = InlineExpression::makeReferenceExpression(varSet, assignment.name);
-            expression.reset(ExpressionParser::parse(path.getDocumentObject(), refExpr.c_str()));
+            expression = ExpressionParser::parse(path.getDocumentObject(), refExpr.c_str());
             QDialog::accept();
             return;
         }

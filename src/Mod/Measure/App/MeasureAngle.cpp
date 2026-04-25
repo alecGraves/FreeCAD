@@ -28,6 +28,7 @@
 #include <App/MeasureManager.h>
 #include <Base/Tools.h>
 #include <Base/Precision.h>
+#include <gp_Pln.hxx>
 #include <GeomAPI_ProjectPointOnCurve.hxx>
 #include <Geom_Line.hxx>
 #include <Geom_Plane.hxx>

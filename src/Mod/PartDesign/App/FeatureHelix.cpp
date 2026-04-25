@@ -33,6 +33,7 @@
 #include <BRepClass3d_SolidClassifier.hxx>
 #include <BRepOffsetAPI_MakePipe.hxx>
 #include <BRepOffsetAPI_MakePipeShell.hxx>
+#include <Message_ProgressRange.hxx>
 #include <BRepPrimAPI_MakeRevol.hxx>
 #include <ShapeFix_ShapeTolerance.hxx>
 #include <ShapeFix_Solid.hxx>
