@@ -2,6 +2,7 @@
 
 #include <FCGlobal.h>
 #include <string>
+#include <tuple>
 
 namespace App
 {

@@ -1351,11 +1351,16 @@ PyObject* ApplicationPy::sSetFineGrainedRecompute(PyObject* /*self*/, PyObject* 
     PY_CATCH;
 }
 
-PyObject* ApplicationPy::sGetFineGrainedRecompute(PyObject* /*self*/, PyObject* /*args*/)
+PyObject* ApplicationPy::sGetFineGrainedRecompute(PyObject* /*self*/, PyObject* args)
 {
+    if (!PyArg_ParseTuple(args, "")) {
+        return nullptr;
+    }
+
     PY_TRY
     {
         return Py::new_reference_to(Py::Boolean(GetApplication().fineGrained));
     }
     PY_CATCH;
 }
+// NOLINTEND(cppcoreguidelines-pro-type-*)
