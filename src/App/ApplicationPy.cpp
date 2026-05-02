@@ -1334,4 +1334,32 @@ PyObject* ApplicationPy::sCheckAbort(PyObject* /*self*/, PyObject* args)
     }
     PY_CATCH
 }
+
+PyObject* ApplicationPy::sSetFineGrainedRecompute(PyObject* /*self*/, PyObject* args)
+{
+    PyObject* enabled = Py_False;
+    if (!PyArg_ParseTuple(args, "O!", &PyBool_Type, &enabled)) {
+        return nullptr;
+    }
+
+    PY_TRY
+    {
+        GetApplication().fineGrained = Base::asBoolean(enabled);
+        Py_Return;
+    }
+    PY_CATCH;
+}
+
+PyObject* ApplicationPy::sGetFineGrainedRecompute(PyObject* /*self*/, PyObject* args)
+{
+    if (!PyArg_ParseTuple(args, "")) {
+        return nullptr;
+    }
+
+    PY_TRY
+    {
+        return Py::new_reference_to(Py::Boolean(GetApplication().fineGrained));
+    }
+    PY_CATCH;
+}
 // NOLINTEND(cppcoreguidelines-pro-type-*)
