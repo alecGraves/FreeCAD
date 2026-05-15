@@ -27,6 +27,7 @@
 #include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRepCheck_Solid.hxx>
 #include <BRepCheck_Status.hxx>
+#include <Message_ProgressRange.hxx>
 #include <gp_Pln.hxx>
 #include <gp_Pnt.hxx>
 #include <ShapeFix_Solid.hxx>
@@ -34,6 +35,7 @@
 #include <TopExp_Explorer.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_Builder.hxx>
+
 
 
 #include "App/Datums.h"
@@ -240,7 +242,7 @@ TopoShape Feature::fixSolids(const TopoShape& solids)
     for (; xp.More(); xp.Next()) {
         TopoDS_Solid solid = TopoDS::Solid(xp.Current());
         BRepCheck_Solid bs(solid);
-        if (bs.IsStatusOnShape(solid)) {
+        if (!bs.StatusOnShape(solid).IsEmpty()) {
             const auto& listOfStatus = bs.StatusOnShape(solid);
             if (listOfStatus.Contains(BRepCheck_EnclosedRegion)) {
                 fixSolids.emplace_back(solid);

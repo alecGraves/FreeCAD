@@ -525,7 +525,7 @@ QuantitySpinBox::InlineCommitResult QuantitySpinBox::commitInlineExpression(QStr
         if (isBound()) {
             std::shared_ptr<App::Expression> ref;
             try {
-                ref.reset(ExpressionParser::parse(getPath().getDocumentObject(), refExpr.c_str()));
+                ref = ExpressionParser::parse(getPath().getDocumentObject(), refExpr.c_str());
             }
             catch (const Base::Exception& e) {
                 error = QString::fromUtf8(e.what());

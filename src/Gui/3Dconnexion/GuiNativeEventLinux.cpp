@@ -113,7 +113,7 @@ void Gui::GuiNativeEvent::initSpaceball(QMainWindow* window)
         );
     }
     else {
-        spnav_client_name("FreeCAD");
+        // Older libspnav builds shipped with Ubuntu 22 do not expose spnav_client_name().
         Base::Console().log("Connected to spacenav daemon\n");
         spnavNotifier = new QSocketNotifier(spnav_fd(), QSocketNotifier::Read, this);
         connect(spnavNotifier, SIGNAL(activated(int)), this, SLOT(pollSpacenav()));

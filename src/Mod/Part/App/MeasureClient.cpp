@@ -63,6 +63,10 @@
 #include "PartFeature.h"
 
 #include "MeasureClient.h"
+#include <gp_Cylinder.hxx>
+#include <gp_Sphere.hxx>
+#include <gp_Torus.hxx>
+
 
 using namespace Part;
 using Attacher::AttachEnginePlane;
