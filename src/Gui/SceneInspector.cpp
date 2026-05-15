@@ -228,7 +228,7 @@ void SceneModel::setNode(QModelIndex index, SoNode* node)
 {
     this->setData(
         index.siblingAtColumn(static_cast<int>(Column::INVENTOR_TREE)),
-        QVariant(QString::fromLatin1(QByteArray(node->getTypeId().getName())))
+        QVariant(QString::fromLatin1(QByteArray(node->getTypeId().getName().getString())))
     );
 
     QHash<SoNode*, QString>::iterator it = nodeNames.find(node);

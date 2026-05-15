@@ -326,7 +326,10 @@ void DlgAddProperty::initializeTypes()
 
     const auto addTypes = [this, &lastType](const std::vector<Base::Type>& types) {
         for (const auto& type : types) {
-            ui->comboBoxType->addItem(QString::fromLatin1(type.getName()));
+            const auto typeName = type.getName();
+            ui->comboBoxType->addItem(
+                QString::fromLatin1(typeName.data(), static_cast<int>(typeName.size()))
+            );
             if (type == lastType) {
                 ui->comboBoxType->setCurrentIndex(ui->comboBoxType->count() - 1);
             }
@@ -705,8 +708,9 @@ void DlgAddProperty::removeEditor()
 
 bool DlgAddProperty::isEnumPropertyItem() const
 {
+    const auto enumTypeName = App::PropertyEnumeration::getClassTypeId().getName();
     return ui->comboBoxType->currentText()
-        == QString::fromLatin1(App::PropertyEnumeration::getClassTypeId().getName());
+        == QString::fromLatin1(enumTypeName.data(), static_cast<int>(enumTypeName.size()));
 }
 
 QVariant DlgAddProperty::getEditorData() const
