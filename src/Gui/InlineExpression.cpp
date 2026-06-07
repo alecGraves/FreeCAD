@@ -362,7 +362,7 @@ bool parseNumberExpression(
 )
 {
     try {
-        expr.reset(App::ExpressionParser::parse(owner, source.toUtf8().constData()));
+        expr = App::ExpressionParser::parse(owner, source.toUtf8().constData());
     }
     catch (const Base::Exception& e) {
         message = QString::fromUtf8(e.what());

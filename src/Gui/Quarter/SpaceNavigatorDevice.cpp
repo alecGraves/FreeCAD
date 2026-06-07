@@ -95,7 +95,7 @@ SpaceNavigatorDevice::SpaceNavigatorDevice(QuarterWidget* quarter) :
     fprintf(stderr, "Quarter:: Could not hook up to Spacenav device.\n");
   }
   else {
-    spnav_client_name("FreeCAD");
+    // Older libspnav builds shipped with Ubuntu 22 do not expose spnav_client_name().
   }
 
 #endif // HAVE_SPACENAV_LIB

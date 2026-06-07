@@ -308,9 +308,10 @@ TStringMap Translator::supportedLocales() const
         const QStringList fileNames = dir.entryList(qmFilter, QDir::Files);
         for (const auto& file : fileNames) {
             const auto lang
-                = file.mid(file.lastIndexOf('_') + 1).chopped(sizeof(".qm") - 1).toStdString();
+                = QStringView(file).mid(file.lastIndexOf('_') + 1).chopped(sizeof(".qm") - 1);
+            const QString languageCode = lang.toString();
             for (const auto& domainMap : d->mapLanguageTopLevelDomain) {
-                if (lang == domainMap.second) {
+                if (languageCode == QString::fromStdString(domainMap.second)) {
                     // Emplace only inserts if no element exists at the key yet,
                     // avoiding string copies here.
                     d->mapSupportedLocales.emplace(domainMap.first, domainMap.second);

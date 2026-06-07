@@ -21,7 +21,7 @@ setup_qt_test(QuantitySpinBox)
 
 target_link_libraries(Gui_tests_run PRIVATE
     GTest::gtest_main
-    GTest::gmock_main
+    gmock_main
     FreeCADApp
     FreeCADGui
 )

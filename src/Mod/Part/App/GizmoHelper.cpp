@@ -42,7 +42,9 @@
 #include <Base/BoundBox.h>
 #include <Base/Converter.h>
 #include <Mod/Part/App/Tools.h>
-
+#include <gp_Pln.hxx>
+#include <gp_Cylinder.hxx>
+#include <gp_Cone.hxx>
 
 EdgeMidPointProps getEdgeMidPointProps(Part::TopoShape& edge)
 {
