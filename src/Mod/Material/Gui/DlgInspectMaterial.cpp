@@ -185,12 +185,12 @@ void DlgInspectMaterial::update(std::vector<Gui::ViewProvider*>& views)
                 ui->editSubShape->setText(QStringLiteral(""));
             }
 
-            auto subShapeType = QString::fromUtf8(obj->getTypeId().getName());
+            auto subShapeType = QString::fromStdString(std::string(obj->getTypeId().getName()));
             subShapeType.remove(subShapeType.indexOf(QStringLiteral("::")), subShapeType.size());
             appendClip(tr("Type: ") + subShapeType);
             ui->editSubShapeType->setText(subShapeType);
-            appendClip(tr("TypeID: ") + QString::fromUtf8(obj->getTypeId().getName()));
-            ui->editShapeType->setText(QString::fromUtf8(obj->getTypeId().getName()));
+            appendClip(tr("TypeID: ") + QString::fromStdString(std::string(obj->getTypeId().getName())));
+            ui->editShapeType->setText(QString::fromStdString(std::string(obj->getTypeId().getName())));
 
             if (labelProp && QString::fromUtf8(labelProp->getValue()).size() > 0) {
                 auto* prop = dynamic_cast<Materials::PropertyMaterial*>(

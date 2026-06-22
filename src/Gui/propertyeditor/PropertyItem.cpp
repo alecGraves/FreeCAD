@@ -686,7 +686,7 @@ QVariant PropertyItem::dataPropertyName(int role) const
     if (role == Qt::ToolTipRole) {
         QString type
             = QStringLiteral("Type: %1\nName: %2")
-                  .arg(QString::fromLatin1(propertyItems[0]->getTypeId().getName()), objectName());
+                  .arg(QString::fromStdString(std::string(propertyItems[0]->getTypeId().getName())), objectName());
 
         QString doc = PropertyItem::toolTip(propertyItems[0]).toString();
         if (doc.isEmpty()) {

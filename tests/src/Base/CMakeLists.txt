@@ -44,6 +44,9 @@ add_executable(Base_tests_run
 
 setup_qt_test(InventorBuilder)
 
+target_include_directories(Base_tests_run PRIVATE
+    ${CMAKE_SOURCE_DIR}/tests/lib/googlemock/include
+)
 target_link_libraries(Base_tests_run PRIVATE
     GTest::gtest_main
     gmock_main

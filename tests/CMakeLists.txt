@@ -6,7 +6,9 @@ endif(WIN32)
 
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_SOURCE_DIR}/tests/lib/googlemock/include
 )
+link_directories(${CMAKE_BINARY_DIR}/lib)
 
 set(CMAKE_AUTOMOC ON)
 

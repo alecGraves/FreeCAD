@@ -169,10 +169,10 @@ void DlgInspectAppearance::update(std::vector<Gui::ViewProvider*>& views)
                 ui->editSubShape->setText(QStringLiteral(""));
             }
 
-            auto subShapeType = QString::fromUtf8(obj->getTypeId().getName());
+            auto subShapeType = QString::fromStdString(std::string(obj->getTypeId().getName()));
             subShapeType.remove(subShapeType.indexOf(QStringLiteral("::")), subShapeType.size());
             ui->editSubShapeType->setText(subShapeType);
-            ui->editShapeType->setText(QString::fromUtf8(obj->getTypeId().getName()));
+            ui->editShapeType->setText(QString::fromStdString(std::string(obj->getTypeId().getName())));
 
             ui->tabAppearance->clear();
             if (labelProp && QString::fromUtf8(labelProp->getValue()).size() > 0) {

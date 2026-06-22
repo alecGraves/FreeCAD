@@ -359,7 +359,8 @@ void DlgSettingsNavigation::retranslate()
     // add submenu at the end to select navigation style
     std::map<Base::Type, std::string> styles = UserNavigationStyle::getUserFriendlyNames();
     for (const auto& style : styles) {
-        QByteArray data(style.first.getName());
+        auto namestr = style.first.getName();
+        QByteArray data(namestr.data(), int(namestr.size()));
         QString name = QApplication::translate(
             std::string {style.first.getName()}.c_str(),
             style.second.c_str()

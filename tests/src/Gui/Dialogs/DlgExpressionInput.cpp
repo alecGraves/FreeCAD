@@ -455,6 +455,9 @@ private:
     App::PropertyFloat* targetProp {};
 };
 
+std::unique_ptr<Gui::Application> testDlgExpressionInput::guiApp;
+std::unique_ptr<Gui::MainWindow> testDlgExpressionInput::mainWindow;
+
 QTEST_MAIN(testDlgExpressionInput)
 
 #include "DlgExpressionInput.moc"

@@ -32,6 +32,7 @@
 #include <BRepClass3d_SolidClassifier.hxx>
 #include <BRepOffsetAPI_MakePipeShell.hxx>
 #include <gp_Ax2.hxx>
+#include <gp_Pln.hxx>
 #include <Law_Function.hxx>
 #include <Precision.hxx>
 #include <ShapeAnalysis_FreeBounds.hxx>
